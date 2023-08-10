@@ -10,7 +10,7 @@ object MainApp extends App {
   implicit val spark = SparkSessionInitializer.completeSparkSession(initSpark)
   implicit val prop = loadPropertiesFile()
 
-  val dfPedido = readOracle("shop", "pedido")
+  val dfPedido = readOracle("shop", "products")
   dfPedido.show(false)
 
   SparkSessionInitializer.stopSparkSession(spark)
