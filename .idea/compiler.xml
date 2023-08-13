@@ -9,8 +9,5 @@
         <module name="example" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="bluetab_laboratory" target="1.5" />
-    </bytecodeTargetLevel>
   </component>
 </project>
