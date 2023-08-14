@@ -15,6 +15,13 @@ object OracleConnect {
           prop.getProperty ("passwordShop"),
           prop.getProperty ("driver")
         )
+      case "control" =>
+        apply(
+          prop.getProperty("url"),
+          prop.getProperty("userControl"),
+          prop.getProperty("passwordControl"),
+          prop.getProperty("driver")
+        )
     }
   }
 
