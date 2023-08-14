@@ -6,7 +6,7 @@ Creamos en el disco raiz "development" (C:\development)
 
 Creamos estas carpetas:
 
-C:\development\codes\supra                         (Aqui descomprimimos el zip "example" que mando Jon)
+C:\development\codes                               (Aqui descomprimimos el zip "example" que mando Jon)
 
 C:\development\maven-repository\example
 
