@@ -30,24 +30,22 @@ object ReadersAndWritersUtils {
       .withColumn("day", lit(day))
       .withColumn("hour", lit(hour))
       .withColumn("minute", lit(minute))
-      //.drop("UPDATE_DATE")
       .repartition(1)
       .write.mode("overwrite")
       .partitionBy("year", "month", "day", "hour", "minute")
       .format("csv").save(path)
   }
 
-  def writeCommon(dfData: DataFrame, path: String)(implicit spark: SparkSession, prop: Properties): Unit = {
+  def writeCommon(dfData: DataFrame, year: Int, month: Int, day : Int, hour : Int, minute: Int, path: String)(implicit spark: SparkSession, prop: Properties): Unit = {
     dfData
-      .withColumn("year", year(col("UPDATE_DATE")))
-      .withColumn("month", month(col("UPDATE_DATE")))
-      .withColumn("day", dayofmonth(col("UPDATE_DATE")))
-      .withColumn("hour", hour(col("UPDATE_DATE")))
-      .withColumn("minute", minute(col("UPDATE_DATE")))
-      .drop("UPDATE_DATE")
+      .withColumn("year", lit(year))
+      .withColumn("month", lit(month))
+      .withColumn("day", lit(day))
+      .withColumn("hour", lit(hour))
+      .withColumn("minute", lit(minute))
       .repartition(1)
       .write.mode("overwrite")
-      .partitionBy("year", "month", "day")
+      .partitionBy("year", "month", "day", "hour", "minute")
       .format("parquet").save(path)
   }
 

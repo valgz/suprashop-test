@@ -22,7 +22,7 @@ object MainApp extends App {
   println(s"year=$year month=$month day=$day hour=$hour minute=$minute")
 
   val dfControl = readOracle("control", "cargas")
-  dfControl.show(false)
+  //dfControl.show(false)
 
   val dfOrderItems = readOracle("shop", "order_items")
   val dfOrders = readOracle("shop", "orders")
@@ -36,19 +36,19 @@ object MainApp extends App {
   dfOrderItems.show(false)
   dfOrdersItemsJoin.show(false)
 */
+  /*
+    writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
+    writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
+    writeRaw(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
+    writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
+    writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
+  */
+    writeCommon(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathCommonOrderItems"))
+    writeCommon(dfOrders, year, month, day, hour, minute, prop.getProperty("pathCommonOrders"))
+    writeCommon(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathCommonCustomer"))
+    writeCommon(dfVendors, year, month, day, hour, minute, prop.getProperty("pathCommonVendors"))
+    writeCommon(dfProducts, year, month, day, hour, minute, prop.getProperty("pathCommonProducts"))
 
-  writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
-  writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
-  writeRaw(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
-  writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
-  writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
-/*
-  writeCommon(dfOrderItems, prop.getProperty("pathCommonOrderItems"))
-  writeCommon(dfOrders, prop.getProperty("pathCommonOrders"))
-  writeCommon(dfCustomer, prop.getProperty("pathCommonCustomer"))
-  writeCommon(dfVendors, prop.getProperty("pathCommonVendors"))
-  writeCommon(dfProducts, prop.getProperty("pathCommonProducts"))
-*/
   SparkSessionInitializer.stopSparkSession(spark)
 
 }
