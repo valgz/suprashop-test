@@ -23,6 +23,12 @@ object ReadersAndWritersUtils {
       .load()
   }
 
+  def writeStage(dfData: DataFrame, path: String)(implicit spark: SparkSession, prop: Properties): Unit = {
+    dfData
+      .write.mode("overwrite")
+      .format("csv").save(path)
+  }
+
   def writeRaw(dfData: DataFrame, year: Int, month: Int, day : Int, hour : Int, minute: Int, path: String)(implicit spark: SparkSession, prop: Properties): Unit = {
     dfData
       .withColumn("year", lit(year))
