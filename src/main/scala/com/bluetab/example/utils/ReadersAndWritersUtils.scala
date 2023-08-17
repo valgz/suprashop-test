@@ -23,6 +23,20 @@ object ReadersAndWritersUtils {
       .load()
   }
 
+  def writeOracle(df: DataFrame, schema: String, dbtable: String)(implicit spark: SparkSession, prop: Properties): Unit = {
+    val oracleConnectValues = oracleConnect.apply(schema)
+    df
+      .write
+      .mode("append")
+      .format("jdbc")
+      .option("url", oracleConnectValues.url)
+      .option("user", oracleConnectValues.user)
+      .option("password", oracleConnectValues.password)
+      .option("dbtable", dbtable)
+      .option("driver", oracleConnectValues.driver)
+      .save()
+  }
+
   def writeStage(dfData: DataFrame, path: String)(implicit spark: SparkSession, prop: Properties): Unit = {
     dfData
       .write.mode("overwrite")

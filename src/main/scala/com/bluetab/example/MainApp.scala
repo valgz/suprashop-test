@@ -1,9 +1,9 @@
 package com.bluetab.example
 
 import com.bluetab.example.config.SparkSessionInitializer
-import com.bluetab.example.utils.ReadersAndWritersUtils.{readOracle, writeCommon, writeRaw, writeStage}
+import com.bluetab.example.utils.ReadersAndWritersUtils.{readOracle, writeCommon, writeOracle, writeRaw, writeStage}
 import com.bluetab.example.utils.AppUtils._
-import com.bluetab.example.utils.LoadUtils.readFechaCarga
+import com.bluetab.example.utils.LoadUtils.{insertFechaCarga, isNuevaCarga, readFechaCarga}
 import org.apache.spark.sql.functions.col
 
 import java.util.Calendar
@@ -30,51 +30,60 @@ object MainApp extends App {
 
   val fechaControlOrderItems = readFechaCarga(dfControl, "order_items")
   val fechaControlOrders = readFechaCarga(dfControl, "orders")
-  val fechaControlCustomer = readFechaCarga(dfControl, "customer")
+  val fechaControlCustomers = readFechaCarga(dfControl, "customers")
   val fechaControlVendors = readFechaCarga(dfControl, "vendors")
   val fechaControlProducts = readFechaCarga(dfControl, "products")
 
-  val newOrderItems = readOracle("shop", "order_items").filter(col("update_date") > fechaControlOrderItems)
-  val newOrders = readOracle("shop", "orders").filter(col("update_date") > fechaControlOrders)
-  val newCustomer = readOracle("shop", "customer").filter(col("update_date") > fechaControlCustomer)
-  val newVendors = readOracle("shop", "vendors").filter(col("update_date") > fechaControlVendors)
-  val newProducts = readOracle("shop", "products").filter(col("update_date") > fechaControlProducts)
 
-  /***********************Escritura en STAGE*************************/
+    val newOrderItems = readOracle("shop", "order_items").filter(col("update_date") > fechaControlOrderItems)
+    val newOrders = readOracle("shop", "orders").filter(col("update_date") > fechaControlOrders)
+    val newCustomers = readOracle("shop", "customers").filter(col("update_date") > fechaControlCustomers)
+    val newVendors = readOracle("shop", "vendors").filter(col("update_date") > fechaControlVendors)
+    val newProducts = readOracle("shop", "products").filter(col("update_date") > fechaControlProducts)
 
-  if (!newOrderItems.isEmpty) writeStage(newOrderItems, prop.getProperty("pathStageOrderItems"))
-  if (!newOrders.isEmpty) writeStage(newOrders, prop.getProperty("pathStageOrders"))
-  if (!newCustomer.isEmpty) writeStage(newCustomer, prop.getProperty("pathStageCustomer"))
-  if (!newOrderItems.isEmpty) writeStage(newVendors, prop.getProperty("pathStageVendors"))
-  if (!newProducts.isEmpty) writeStage(newProducts, prop.getProperty("pathStageProducts"))
+    /***********************Escritura en STAGE*************************/
 
-  /*
-  val dfOrdersItemsJoin = joinOrdersOrderItems(dfOrders, dfOrderItems)
-  dfOrders.show(false)
-  dfOrderItems.show(false)
-  dfOrdersItemsJoin.show(false)
-*/
-  /*******************************Lectura completa*******************************/
+    if (!newOrderItems.isEmpty) writeStage(newOrderItems, prop.getProperty("pathStageOrderItems"))
+    if (!newOrders.isEmpty) writeStage(newOrders, prop.getProperty("pathStageOrders"))
+    if (!newCustomers.isEmpty) writeStage(newCustomers, prop.getProperty("pathStageCustomer"))
+    if (!newOrderItems.isEmpty) writeStage(newVendors, prop.getProperty("pathStageVendors"))
+    if (!newProducts.isEmpty) writeStage(newProducts, prop.getProperty("pathStageProducts"))
 
-  val dfOrderItems = readOracle("shop", "order_items")
-  val dfOrders = readOracle("shop", "orders")
-  val dfCustomer = readOracle("shop", "customer")
-  val dfVendors = readOracle("shop", "vendors")
-  val dfProducts = readOracle("shop", "products")
+    /*
+    val dfOrdersItemsJoin = joinOrdersOrderItems(dfOrders, dfOrderItems)
+    dfOrders.show(false)
+    dfOrderItems.show(false)
+    dfOrdersItemsJoin.show(false)
+  */
+    /*******************************Lectura completa*******************************/
 
-  /***************************Escritura en RAW y COMMON********************************/
+    val dfOrderItems = readOracle("shop", "order_items")
+    val dfOrders = readOracle("shop", "orders")
+    val dfCustomers = readOracle("shop", "customers")
+    val dfVendors = readOracle("shop", "vendors")
+    val dfProducts = readOracle("shop", "products")
 
-   writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
-   writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
-   writeRaw(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
-   writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
-   writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
+    /***************************Escritura en RAW y COMMON********************************/
 
-   writeCommon(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathCommonOrderItems"))
-   writeCommon(dfOrders, year, month, day, hour, minute, prop.getProperty("pathCommonOrders"))
-   writeCommon(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathCommonCustomer"))
-   writeCommon(dfVendors, year, month, day, hour, minute, prop.getProperty("pathCommonVendors"))
-   writeCommon(dfProducts, year, month, day, hour, minute, prop.getProperty("pathCommonProducts"))
+     writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
+     writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
+     writeRaw(dfCustomers, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
+     writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
+     writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
+
+     writeCommon(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathCommonOrderItems"))
+     writeCommon(dfOrders, year, month, day, hour, minute, prop.getProperty("pathCommonOrders"))
+     writeCommon(dfCustomers, year, month, day, hour, minute, prop.getProperty("pathCommonCustomer"))
+     writeCommon(dfVendors, year, month, day, hour, minute, prop.getProperty("pathCommonVendors"))
+     writeCommon(dfProducts, year, month, day, hour, minute, prop.getProperty("pathCommonProducts"))
+
+    /***************************************Actualizacion de tabla CARGAS***************************************************/
+
+  if (isNuevaCarga(dfOrderItems, dfControl, "order_items")) writeOracle(insertFechaCarga(dfOrderItems, "order_items"), "control", "cargas")
+  if (isNuevaCarga(dfOrders, dfControl, "orders")) writeOracle(insertFechaCarga(dfOrders, "orders"), "control", "cargas")
+  if (isNuevaCarga(dfCustomers, dfControl, "customers")) writeOracle(insertFechaCarga(dfCustomers, "customers"), "control", "cargas")
+  if (isNuevaCarga(dfVendors, dfControl, "vendors")) writeOracle(insertFechaCarga(dfVendors, "vendors"), "control", "cargas")
+  if (isNuevaCarga(dfProducts, dfControl, "products")) writeOracle(insertFechaCarga(dfProducts, "products"), "control", "cargas")
 
   SparkSessionInitializer.stopSparkSession(spark)
 

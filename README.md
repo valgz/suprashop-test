@@ -1,3 +1,7 @@
+# Actualizaciones
+
+**17-08-23 : La escritura en stage no se hace correctamente, genera archivos en blanco. Revisar metodo .isEmpty**
+
 # Estructura del proyecto
 
 En esta repo solo esta el codigo propiamente con el pom.xml. Para que funcione correctamente tienen que seguir esta estructura de carpetas:
