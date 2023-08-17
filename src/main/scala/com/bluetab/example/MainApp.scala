@@ -34,19 +34,19 @@ object MainApp extends App {
   val fechaControlVendors = readFechaCarga(dfControl, "vendors")
   val fechaControlProducts = readFechaCarga(dfControl, "products")
 
-  val dfOrderItems = readOracle("shop", "order_items").filter(col("update_date") > fechaControlOrderItems)
-  val dfOrders = readOracle("shop", "orders").filter(col("update_date") > fechaControlOrders)
-  val dfCustomer = readOracle("shop", "customer").filter(col("update_date") > fechaControlCustomer)
-  val dfVendors = readOracle("shop", "vendors").filter(col("update_date") > fechaControlVendors)
-  val dfProducts = readOracle("shop", "products").filter(col("update_date") > fechaControlProducts)
+  val newOrderItems = readOracle("shop", "order_items").filter(col("update_date") > fechaControlOrderItems)
+  val newOrders = readOracle("shop", "orders").filter(col("update_date") > fechaControlOrders)
+  val newCustomer = readOracle("shop", "customer").filter(col("update_date") > fechaControlCustomer)
+  val newVendors = readOracle("shop", "vendors").filter(col("update_date") > fechaControlVendors)
+  val newProducts = readOracle("shop", "products").filter(col("update_date") > fechaControlProducts)
 
   /***********************Escritura en STAGE*************************/
 
-  writeStage(dfOrderItems, prop.getProperty("pathStageOrderItems"))
-  writeStage(dfOrders, prop.getProperty("pathStageOrders"))
-  writeStage(dfCustomer, prop.getProperty("pathStageCustomer"))
-  writeStage(dfVendors, prop.getProperty("pathStageVendors"))
-  writeStage(dfProducts, prop.getProperty("pathStageProducts"))
+  if (!newOrderItems.isEmpty) writeStage(newOrderItems, prop.getProperty("pathStageOrderItems"))
+  if (!newOrders.isEmpty) writeStage(newOrders, prop.getProperty("pathStageOrders"))
+  if (!newCustomer.isEmpty) writeStage(newCustomer, prop.getProperty("pathStageCustomer"))
+  if (!newOrderItems.isEmpty) writeStage(newVendors, prop.getProperty("pathStageVendors"))
+  if (!newProducts.isEmpty) writeStage(newProducts, prop.getProperty("pathStageProducts"))
 
   /*
   val dfOrdersItemsJoin = joinOrdersOrderItems(dfOrders, dfOrderItems)
@@ -54,19 +54,28 @@ object MainApp extends App {
   dfOrderItems.show(false)
   dfOrdersItemsJoin.show(false)
 */
-  /*
-    writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
-    writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
-    writeRaw(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
-    writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
-    writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
+  /*******************************Lectura completa*******************************/
 
-    writeCommon(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathCommonOrderItems"))
-    writeCommon(dfOrders, year, month, day, hour, minute, prop.getProperty("pathCommonOrders"))
-    writeCommon(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathCommonCustomer"))
-    writeCommon(dfVendors, year, month, day, hour, minute, prop.getProperty("pathCommonVendors"))
-    writeCommon(dfProducts, year, month, day, hour, minute, prop.getProperty("pathCommonProducts"))
-*/
+  val dfOrderItems = readOracle("shop", "order_items")
+  val dfOrders = readOracle("shop", "orders")
+  val dfCustomer = readOracle("shop", "customer")
+  val dfVendors = readOracle("shop", "vendors")
+  val dfProducts = readOracle("shop", "products")
+
+  /***************************Escritura en RAW y COMMON********************************/
+
+   writeRaw(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathRawOrderItems"))
+   writeRaw(dfOrders, year, month, day, hour, minute, prop.getProperty("pathRawOrders"))
+   writeRaw(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathRawCustomer"))
+   writeRaw(dfVendors, year, month, day, hour, minute, prop.getProperty("pathRawVendors"))
+   writeRaw(dfProducts, year, month, day, hour, minute, prop.getProperty("pathRawProducts"))
+
+   writeCommon(dfOrderItems, year, month, day, hour, minute, prop.getProperty("pathCommonOrderItems"))
+   writeCommon(dfOrders, year, month, day, hour, minute, prop.getProperty("pathCommonOrders"))
+   writeCommon(dfCustomer, year, month, day, hour, minute, prop.getProperty("pathCommonCustomer"))
+   writeCommon(dfVendors, year, month, day, hour, minute, prop.getProperty("pathCommonVendors"))
+   writeCommon(dfProducts, year, month, day, hour, minute, prop.getProperty("pathCommonProducts"))
+
   SparkSessionInitializer.stopSparkSession(spark)
 
 }

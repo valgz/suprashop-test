@@ -37,7 +37,7 @@ object ReadersAndWritersUtils {
       .withColumn("hour", lit(hour))
       .withColumn("minute", lit(minute))
       .repartition(1)
-      .write.mode("overwrite")
+      .write.mode("append")
       .partitionBy("year", "month", "day", "hour", "minute")
       .format("csv").save(path)
   }
@@ -50,7 +50,7 @@ object ReadersAndWritersUtils {
       .withColumn("hour", lit(hour))
       .withColumn("minute", lit(minute))
       .repartition(1)
-      .write.mode("overwrite")
+      .write.mode("append")
       .partitionBy("year", "month", "day", "hour", "minute")
       .format("parquet").save(path)
   }
